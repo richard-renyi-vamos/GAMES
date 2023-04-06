@@ -1,0 +1,91 @@
+import pygame
+import random
+
+pygame.init()
+
+# Game settings
+width = 500
+height = 600
+block_size = 30
+fps = 30
+
+# Define colors
+white = (255, 255, 255)
+black = (0, 0, 0)
+red = (200, 0, 0)
+green = (0, 200, 0)
+blue = (0, 0, 200)
+yellow = (200, 200, 0)
+light_blue = (0, 200, 200)
+purple = (200, 0, 200)
+orange = (255, 165, 0)
+
+# Create game window
+screen = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Tetris")
+
+# Create font
+font = pygame.font.SysFont(None, 25)
+
+# Define shapes
+shapes = [
+    [[[1, 1, 1], [0, 1, 0]], [purple]],
+    [[[1, 1, 1], [1, 0, 0]], [blue]],
+    [[[1, 1, 1], [0, 0, 1]], [green]],
+    [[[1, 1], [1, 1]], [yellow]],
+    [[[0, 1, 1], [1, 1, 0]], [orange]],
+    [[[1, 1, 0], [0, 1, 1]], [light_blue]],
+    [[[0, 1], [0, 1], [1, 1]], [red]]
+]
+
+# Define functions
+def new_shape():
+    shape = random.choice(shapes)
+    return shape
+
+def draw_block(x, y, color):
+    pygame.draw.rect(screen, color, [x + 1, y + 1, block_size - 2, block_size - 2])
+
+def draw_shape(shape, x, y):
+    color = shape[1][0]
+    shape = shape[0]
+    for i in range(len(shape)):
+        for j in range(len(shape[i])):
+            if shape[i][j] == 1:
+                draw_block(x + j * block_size, y + i * block_size, color)
+
+def check_collision(board, shape, offset):
+    for i in range(len(shape)):
+        for j in range(len(shape[i])):
+            if shape[i][j] == 1:
+                x = j + offset[0]
+                y = i + offset[1]
+                if x < 0 or x >= 10 or y >= 20:
+                    return True
+                if y < 0:
+                    continue
+                if board[y][x] != black:
+                    return True
+    return False
+
+def merge_board(board, shape, offset):
+    for i in range(len(shape)):
+        for j in range(len(shape[i])):
+            if shape[i][j] == 1:
+                x = j + offset[0]
+                y = i + offset[1]
+                board[y][x] = shape[1][0]
+    return board
+
+def delete_row(board, row):
+    del board[row]
+    return [[black for i in range(10)]] + board
+
+def check_rows(board):
+    rows = 0
+    for i in range(len(board)):
+        if black not in board[i]:
+            board = delete_row(board, i)
+            rows
+
+# CREATED WITH THE HELP OF OPEN-AI CHAT-GPT: https://chat.openai.com/chat
