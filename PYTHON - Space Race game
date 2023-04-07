@@ -1,0 +1,102 @@
+import pygame
+import random
+
+# Set up Pygame
+pygame.init()
+
+# Set up the game window
+window_width = 800
+window_height = 600
+window = pygame.display.set_mode((window_width, window_height))
+pygame.display.set_caption('Jumper Game')
+
+# Set up the game clock
+clock = pygame.time.Clock()
+
+# Define the player's starting position
+player_x = window_width // 2
+player_y = window_height - 50
+
+# Define the player's jump height and speed
+jump_height = 200
+jump_speed = 10
+
+# Define the platform dimensions and speed
+platform_width = 100
+platform_height = 20
+platform_speed = 5
+
+# Define the font for the score text
+score_font = pygame.font.Font(None, 36)
+
+# Set up the game variables
+platforms = []
+score = 0
+game_over = False
+
+# Define a function to create a new platform
+def create_platform():
+    platform_x = random.randint(0, window_width - platform_width)
+    platform_y = random.randint(-50, -platform_height)
+    return pygame.Rect(platform_x, platform_y, platform_width, platform_height)
+
+# Create the initial platforms
+for i in range(10):
+    platforms.append(create_platform())
+
+# Define the game loop
+while not game_over:
+    # Handle events
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            game_over = True
+
+    # Move the player horizontally
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT] and player_x > 0:
+        player_x -= 5
+    if keys[pygame.K_RIGHT] and player_x < window_width - 50:
+        player_x += 5
+
+    # Make the player jump
+    if keys[pygame.K_SPACE]:
+        for i in range(jump_height):
+            player_y -= jump_speed
+            for platform in platforms:
+                if player.colliderect(platform):
+                    player_y = platform.top + 1
+        for i in range(jump_height):
+            player_y += jump_speed
+            for platform in platforms:
+                if player.colliderect(platform):
+                    player_y = platform.top - player.height - 1
+
+    # Move the platforms down
+    for platform in platforms:
+        platform.move_ip(0, platform_speed)
+        if platform.top > window_height:
+            platforms.remove(platform)
+            platforms.append(create_platform())
+            score += 1
+ 
+    # Draw the game objects
+    window.fill((0, 0, 0))
+    player = pygame.draw.rect(window, (255, 255, 255), (player_x, player_y, 50, 50))
+    for platform in platforms:
+        pygame.draw.rect(window, (0, 255, 0), platform)
+    score_text = score_font.render(f'Score: {score}', True, (255, 255, 255))
+    window.blit(score_text, (10, 10))
+    pygame.display.update()
+
+    # Check for collisions
+    for platform in platforms:
+        if player.colliderect(platform):
+            game_over = True
+
+    # Limit the frame rate
+    clock.tick(60)
+
+# Clean up Pygame
+pygame.quit()
+
+# CREATED WITH THE HELP OF OPEN-AI CHAT GPT: https://chat.openai.com/chat
