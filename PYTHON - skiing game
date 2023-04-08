@@ -1,0 +1,71 @@
+import os
+import pygame
+import random
+
+# Get absolute path of script directory
+script_dir = os.path.dirname(__file__)
+
+# Initialize Pygame
+pygame.init()
+
+# Set up the screen
+screen = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Skiing Game")
+
+# Load images
+player_image = pygame.image.load(os.path.join(script_dir, "player.png"))
+tree_image = pygame.image.load(os.path.join(script_dir, "tree.png"))
+tree_image = pygame.transform.scale(tree_image, (80, 80))
+
+# Set up game variables
+player_x = 400
+player_y = 550
+player_speed = 5
+tree_x = random.randint(0, 720)
+tree_y = 0
+tree_speed = 5
+
+# Set up game loop
+clock = pygame.time.Clock()
+running = True
+while running:
+
+    # Handle events
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Update game state
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        player_x -= player_speed
+    if keys[pygame.K_RIGHT]:
+        player_x += player_speed
+
+    tree_y += tree_speed
+    if tree_y > 600:
+        tree_x = random.randint(0, 720)
+        tree_y = 0
+
+    # Draw game objects
+    screen.fill((135, 206, 250))  # sky blue background
+    screen.blit(player_image, (player_x, player_y))
+    screen.blit(tree_image, (tree_x, tree_y))
+
+    # Check for collisions
+    if player_x < tree_x + 80 and player_x + 80 > tree_x and player_y < tree_y + 80 and player_y + 80 > tree_y:
+        print("Collision!")
+        running = False
+
+    # Update screen
+    pygame.display.flip()
+
+    # Delay to control game speed
+    clock.tick(30)  # Set the frame rate to 30 frames per second
+
+# Clean up
+pygame.quit()
+
+# ADD THESE IMAGES TO THE DESKTOP TO MAKE THE GAME WORK:  player.png  ; tree.png
+
+# CREATED WITH THE HELP OF OPEN-AI CHAT GPT: https://chat.openai.com/chat
