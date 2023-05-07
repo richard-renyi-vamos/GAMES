@@ -1,0 +1,69 @@
+import pygame
+import random
+
+pygame.init()
+
+width = 500
+height = 500
+win = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Jumping Game")
+
+player_width = 50
+player_height = 50
+player_x = width // 2 - player_width // 2
+player_y = height - player_height
+
+obstacle_radius = 20
+obstacle_x = random.randint(obstacle_radius, width - obstacle_radius)
+obstacle_y = -obstacle_radius
+obstacle_speed = 5
+
+def draw_player():
+    pygame.draw.rect(win, (255, 0, 0), (player_x, player_y, player_width, player_height))
+
+def draw_obstacle():
+    pygame.draw.circle(win, (0, 0, 255), (obstacle_x, obstacle_y), obstacle_radius)
+
+def is_collision():
+    distance = ((player_x - obstacle_x) ** 2 + (player_y - obstacle_y) ** 2) ** 0.5
+    if distance < player_height / 2 + obstacle_radius:
+        return True
+    else:
+        return False
+
+clock = pygame.time.Clock()
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            quit()
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT] and player_x > 0:
+        player_x -= 5
+    if keys[pygame.K_RIGHT] and player_x < width - player_width:
+        player_x += 5
+    if keys[pygame.K_SPACE]:
+        player_y -= 10
+
+    win.fill((255, 255, 255))
+
+    obstacle_y += obstacle_speed
+    if obstacle_y > height + obstacle_radius:
+        obstacle_x = random.randint(obstacle_radius, width - obstacle_radius)
+        obstacle_y = -obstacle_radius
+
+    draw_player()
+    draw_obstacle()
+
+    if is_collision():
+        print("Game Over!")
+        pygame.quit()
+        quit()
+
+    pygame.display.update()
+    clock.tick(60)
+
+
+# CREATED WITH THE HELP OF OPEN-AI CHAT GPT: https://chat.openai.com/chat
