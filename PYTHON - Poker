@@ -1,0 +1,81 @@
+import random
+
+# Initialize the deck of cards
+suits = ['♠', '♡', '♢', '♣']
+ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+deck = [rank + suit for suit in suits for rank in ranks]
+
+# Define the ranks of poker hands
+hand_rankings = [
+    "High Card",
+    "Pair",
+    "Two Pair",
+    "Three of a Kind",
+    "Straight",
+    "Flush",
+    "Full House",
+    "Four of a Kind",
+    "Straight Flush",
+]
+
+# Deal two private cards to each player
+def deal_cards():
+    player_hand = random.sample(deck, 2)
+    computer_hand = random.sample(deck, 2)
+    return player_hand, computer_hand
+
+# Evaluate the rank of a given hand
+def evaluate_hand(hand):
+    hand_ranks = []
+    hand_suits = []
+    for card in hand:
+        hand_ranks.append(ranks.index(card[:-1]))
+        hand_suits.append(card[-1])
+    hand_ranks.sort()
+    flush = len(set(hand_suits)) == 1
+    straight = hand_ranks[-1] - hand_ranks[0] == 4 and len(set(hand_ranks)) == 5
+    if straight and flush:
+        return hand_rankings.index("Straight Flush")
+    if straight:
+        return hand_rankings.index("Straight")
+    if flush:
+        return hand_rankings.index("Flush")
+    if len(set(hand_ranks)) == 2:
+        return hand_rankings.index("Four of a Kind")
+    if len(set(hand_ranks)) == 3:
+        if hand_ranks.count(hand_ranks[0]) == 1 or hand_ranks.count(hand_ranks[4]) == 1:
+            return hand_rankings.index("Full House")
+        return hand_rankings.index("Three of a Kind")
+    if len(set(hand_ranks)) == 4:
+        return hand_rankings.index("Two Pair")
+    if len(set(hand_ranks)) == 5:
+        return hand_rankings.index("Pair")
+    return hand_rankings.index("High Card")
+
+# Compare the ranks of two hands to determine the winner
+def compare_hands(player_hand, computer_hand):
+    player_rank = evaluate_hand(player_hand)
+    computer_rank = evaluate_hand(computer_hand)
+    if player_rank > computer_rank:
+        return "Player wins!"
+    elif player_rank < computer_rank:
+        return "Computer wins!"
+    else:
+        return "It's a tie!"
+
+# Play a round of poker
+def play_poker():
+    player_hand, computer_hand = deal_cards()
+    print("Player's hand:", player_hand)
+    action = input("Enter 'c' to continue: ")
+    if action.lower() == 'c':
+        print("Computer's hand:", computer_hand)
+        print(compare_hands(player_hand, computer_hand))
+    else:
+        print("Invalid input. Please try again.")
+
+# Start the game
+play_poker()
+
+
+# CREATED WITH THE HELP OF OPEN-AI CHAT GPT: https://chat.openai.com/chat
