@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #game-board {
+      width: 300px;
+      height: 300px;
+      border: 1px solid black;
+      position: relative;
+    }
+
+    .snake {
+      width: 20px;
+      height: 20px;
+      background-color: green;
+      position: absolute;
+    }
+
+    .food {
+      width: 20px;
+      height: 20px;
+      background-color: red;
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-board"></div>
+
+  <script>
+    const gameBoard = document.getElementById("game-board");
+    const gridSize = 15;
+    const cellSize = 20;
+    const snake = [{ x: 5, y: 5 }];
+    let direction = "right";
+    let food = { x: 10, y: 10 };
+
+    function createCell(x, y, className) {
+      const cell = document.createElement("div");
+      cell.className = className;
+      cell.style.left = x * cellSize + "px";
+      cell.style.top = y * cellSize + "px";
+      gameBoard.appendChild(cell);
+      return cell;
+    }
+
+    function updateSnake() {
+      const head = { ...snake[0] };
+      switch (direction) {
+        case "up":
+          head.y -= 1;
+          break;
+        case "down":
+          head.y += 1;
+          break;
+        case "left":
+          head.x -= 1;
+          break;
+        case "right":
+          head.x += 1;
+          break;
+      }
+
+      snake.unshift(head);
+
+      if (head.x === food.x && head.y === food.y) {
+        generateFood();
+      } else {
+        snake.pop();
+      }
+
+      renderSnake();
+    }
+
+    function renderSnake() {
+      while (gameBoard.firstChild) {
+        gameBoard.removeChild(gameBoard.firstChild);
+      }
+
+      snake.forEach(segment => {
+        createCell(segment.x, segment.y, "snake");
+      });
+
+      createCell(food.x, food.y, "food");
+    }
+
+    function generateFood() {
+      const maxX = Math.floor(gameBoard.offsetWidth / cellSize);
+      const maxY = Math.floor(gameBoard.offsetHeight / cellSize);
+
+      food = {
+        x: Math.floor(Math.random() * maxX),
+        y: Math.floor(Math.random() * maxY)
+      };
+    }
+
+    function gameLoop() {
+      updateSnake();
+      setTimeout(gameLoop, 100);
+    }
+
+    document.addEventListener("keydown", event => {
+      switch (event.key) {
+        case "ArrowUp":
+          direction = "up";
+          break;
+        case "ArrowDown":
+          direction = "down";
+          break;
+        case "ArrowLeft":
+          direction = "left";
+          break;
+        case "ArrowRight":
+          direction = "right";
+          break;
+      }
+    });
+
+    generateFood();
+    gameLoop();
+  </script>
+</body>
+</html>
+
+
+// CREATED WITH THE HELP OF OPEN-AI CHAT GPT: https://chat.openai.com/chat
