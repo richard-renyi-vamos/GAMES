@@ -1,0 +1,48 @@
+import tkinter as tk
+import pygame
+
+# Initialize pygame
+pygame.init()
+
+# Character properties
+character_x = 50
+character_y = 50
+character_speed = 5
+
+# Create a Tkinter window
+root = tk.Tk()
+root.title("Character Movement")
+
+# Create a Canvas widget for drawing the character
+canvas = tk.Canvas(root, width=400, height=400)
+canvas.pack()
+
+# Create a rectangle to represent the character
+character = canvas.create_rectangle(
+    character_x, character_y, character_x + 20, character_y + 20, fill="blue")
+
+# Function to move the character
+def move_character(event):
+    global character_x, character_y
+
+    if event.keysym == 'Up':
+        character_y -= character_speed
+    elif event.keysym == 'Down':
+        character_y += character_speed
+    elif event.keysym == 'Left':
+        character_x -= character_speed
+    elif event.keysym == 'Right':
+        character_x += character_speed
+
+    canvas.coords(character, character_x, character_y, character_x + 20, character_y + 20)
+
+# Bind keyboard events to move the character
+root.bind("<Up>", move_character)
+root.bind("<Down>", move_character)
+root.bind("<Left>", move_character)
+root.bind("<Right>", move_character)
+
+# Run the Tkinter main loop
+root.mainloop()
+
+# CREATED WITH THE HELP OF OPEN-AI CHAT GPT: https://chat.openai.com/chat
